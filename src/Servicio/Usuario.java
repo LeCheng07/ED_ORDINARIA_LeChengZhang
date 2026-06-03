@@ -1,6 +1,9 @@
+/**
+ * @author LeCheng Zhang
+ * @version version 3 comentarios javadoc
+ */
+
 package Servicio;
-
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +56,12 @@ public class Usuario extends Persona{
             aux+=","+l.getTitulo();
         return aux;
     }
+    /**
+     * Añade un libro a la lista de libros prestados del usuario si no supera el límite permitido por su tipo de usuario.
+     *
+     * @param l El libro que se desea añadir.
+     * @return true si el libro se añade correctamente; false en caso contrario.
+     */
     public boolean anadirLibro(Libro l) {
         boolean ok=false;
         if (prestados.size()<tipoUsuario.valor) {
@@ -61,11 +70,25 @@ public class Usuario extends Persona{
         }
         return ok;
     }
+
+    /**
+     * Comprueba si el usuario tiene prestado un libro concreto.
+     *
+     * @param l El libro a buscar.
+     * @return true si el usuario tiene el libro; false en caso contrario.
+     */
     public boolean tieneLibro(Libro l) {
         if (prestados.contains(l))
             return true;
         return false;
     }
+
+    /**
+     * Elimina un libro de la lista de libros prestados del usuario comparando su signatura.
+     *
+     * @param l El libro que se desea eliminar.
+     * @return true al finalizar el proceso de eliminación.
+     */
     public boolean eliminarLibro(Libro l) {
         boolean encontrado=false;
         for (int i=0; i<prestados.size() && !encontrado;i++) {
