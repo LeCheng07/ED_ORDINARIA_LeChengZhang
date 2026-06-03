@@ -1,53 +1,33 @@
 package Servicio;
 
-import java.io.*;
+import DAO.DAOBiblioteca;
+import DAO.DAOBibliotecaImpl;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 
-import DAO.Libro;
-
 public class Biblioteca {
-    final static String FICHLIBROS="libros.txt";
-    private List<Libro> libros;
-    private Map<String, Persona> personas;
+    private DAOBiblioteca dao;
+
     public Biblioteca(){
-        libros=new ArrayList<>();
-        personas=new HashMap<>();
-    }
+        this.dao = new DAOBibliotecaImpl();
+    }     
     public void anadirLibro(Libro l) {
-        libros.add(l);
+        dao.anadirLibro(l);
     }
     public List<Libro> todosLosLibros() {
-        return libros;
+        return dao.obtenerLibros();
     }
     public void altaUsuario(String nif, String nombre) {
-        if (!personas.containsKey(nif))
-          personas.put(nif,new Usuario(nif,nombre));
+        dao.altaUsuario(nif, nombre);
     }
     public List<Usuario> listarUsuarios() {
-        List<Usuario> listaUsuarios=new ArrayList<>();
-        for (Persona p:personas.values()){
-            if (p instanceof Usuario)
-                listaUsuarios.add((Usuario)p);
-        }
-        return listaUsuarios;
+        return dao.obtenerUsuarios();
     }
     public Usuario getUsuario(String nif) {
-        Persona p= personas.get(nif);
-        if (p!=null && p instanceof Usuario)
-          return (Usuario)p;
-        return null;
+        return dao.obtenerUsuarioPorNif(nif);
     }
     public Libro getLibro(int signatura) {
-        Libro laux=null;
-        for (Libro l:libros)
-            if (l.getSignatura()==signatura) {
-                laux = l;
-                break;
-            }
-        return laux;
+        return dao.obtenerLibroPorSignatura(signatura);
     }
     public boolean prestarLibro(Usuario u, Libro l) {
         boolean ok=true;
@@ -58,49 +38,32 @@ public class Biblioteca {
         return ok;
     }
     public boolean devolverLibro(Usuario u, Libro l) {
-        if (u.tieneLibro(l))
+        if (u.tieneLibro(l)) {
             if (u.eliminarLibro(l))
                 l.sumarEjemplar();
-        else return false;
+        } else {
+            return false;
+        }
         return true;
     }
 
     public List<Usuario> usuariosConLibro(Libro l) {
         List<Usuario> lista=new ArrayList<>();
-        for (Persona p:personas.values())
-            if (p instanceof Usuario)
-                if(((Usuario)p).tieneLibro(l))
-                    lista.add((Usuario)p);
+        for (Usuario u : dao.obtenerUsuarios()) {
+            if (u.tieneLibro(l)) {
+                lista.add(u);
+            }
+        }
         return lista;
     }
     public void borrarUsuario(Usuario u) {
-        personas.remove(u.nif);
+        dao.borrarUsuario(u.nif);
     }
 
     public void guardarLibros() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FICHLIBROS))){
-            for (Libro l:libros) {
-                bw.write(l.signatura + ";" + l.titulo + ";" + l.getNumEjemplares());
-                bw.newLine();
-            }
-        }catch (Exception e){
-            System.out.println("Error en el fichero de libros");
-        }
+        dao.guardarLibros();
     }
     public void leerLibros() {
-        String linea;
-        try (BufferedReader br = new BufferedReader(new FileReader(FICHLIBROS))){
-            while (br.ready()){
-                linea=br.readLine();
-                String[] campos= linea.split(";");
-                int signatura=Integer.parseInt(campos[0]);
-                String titulo=campos[1];
-                int numEjemplares=Integer.parseInt(campos[2]);
-                Libro l=new Libro(signatura,titulo,numEjemplares);
-                libros.add(l);
-            }
-        }catch (Exception e){
-            System.out.println("Error en el fichero de libros");
-        }
+        dao.leerLibros();
     }
 }

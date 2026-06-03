@@ -1,19 +1,51 @@
 package Servicio;
 
-import DAO.TipoUsuario;
-import lombok.Data;
+
 
 import java.util.ArrayList;
 import java.util.List;
-@Data
+
 public class Usuario extends Persona{
     TipoUsuario tipoUsuario;
     List<Libro> prestados;
-    Usuario (String nif, String nombre){
+    public Usuario(String nif, String nombre){
         super(nif, nombre);
         tipoUsuario= TipoUsuario.NORMAL;
         prestados=new ArrayList<>();
     }
+
+    public TipoUsuario getTipoUsuario() {
+        return tipoUsuario;
+    }
+
+    public void setTipoUsuario(TipoUsuario tipoUsuario) {
+        this.tipoUsuario = tipoUsuario;
+    }
+
+    public List<Libro> getPrestados() {
+        return prestados;
+    }
+
+    public void setPrestados(List<Libro> prestados) {
+        this.prestados = prestados;
+    }
+
+    public String getNif() {
+        return nif;
+    }
+
+    public void setNif(String nif) {
+        this.nif = nif;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
     @Override
     public String toString(){
         String aux=nif+","+nombre;

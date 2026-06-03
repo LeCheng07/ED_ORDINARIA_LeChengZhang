@@ -1,6 +1,6 @@
 package UI;
 
-import DAO.Libro;
+import Servicio.Libro;
 import Servicio.Usuario;
 import Servicio.Biblioteca;
 import java.util.List;
